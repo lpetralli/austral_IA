@@ -2,21 +2,21 @@ from keras.models import load_model  # TensorFlow is required for Keras to work
 from PIL import Image, ImageOps  # Install pillow instead of PIL
 import numpy as np
 import streamlit as st 
-import openai
 from openai import OpenAI
 
 
 
-def classify_waste(img):
+
+def classify_fruit(img):
 
     # Disable scientific notation for clarity
     np.set_printoptions(suppress=True)
 
     # Load the model
-    model = load_model("keras_Model.h5", compile=False)
+    model = load_model("modelo_frutas\keras_model.h5", compile=False)
 
     # Load the labels
-    class_names = open("labels.txt", "r").readlines()
+    class_names = open("modelo_frutas\labels.txt", "r").readlines()
 
     # Create the array of the right shape to feed into the keras model
     # The 'length' or number of images you can put into the array is
@@ -52,10 +52,8 @@ def classify_waste(img):
     return class_name, confidence_score
 
 
-def generate_carbon_footprint_info(label):
+def generate_recipe(label):
 
-    
-    
 
     client = OpenAI(api_key="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")
 
@@ -63,9 +61,9 @@ def generate_carbon_footprint_info(label):
 
     response = client.completions.create(
     model="gpt-3.5-turbo-instruct",
-    prompt= f"You are a helpful assistant with experience in Carbon Emissions. What is the approximate Carbon emission or carbon footprint generated from {label}. I just need an approximate number to create awa reness. Elaborate in 100 words.",
-    temperature=1,
-    max_tokens=100,
+    prompt= f"Sos un asistente experto en cocina con frutas y tenes que recomendar solo 3 ideas de comida para hacer con {label}. Puede ser algo comestible o bebible, considerando si la fruta está buena o mala. No hace falta que expliques las recetas, solo una lista con 3 ideas",
+    temperature=0.5,
+    max_tokens=300,
     top_p=1,
     frequency_penalty=0,
     presence_penalty=0
@@ -75,67 +73,44 @@ def generate_carbon_footprint_info(label):
 
 
 
-
-
 # Streamlit App
 
 st.set_page_config(layout='wide')
 
-st.title("Waste Classifier Sustainability App")
+st.title("Detector de Frutas 👀")
 
-input_img = st.file_uploader("Enter your image", type=['jpg', 'png', 'jpeg'])
+st.subheader("""Cargá tu foto de durazno 🍑, granada 🍅 o frutilla 🍓 y determiná su estado.""")
+st.subheader("""También podés generar recetas 🍴""")
+input_img = st.file_uploader("Elegir imagen", type=['jpg', 'png', 'jpeg'])
 
 if input_img is not None:
-    if st.button("Classify"):
+    if st.button("Determinar tipo de fruta y estado"):
         
         col1, col2, col3 = st.columns([1,1,1])
 
         with col1:
-            st.info("Your uploaded Image")
+            st.info("Imagen cargada")
             st.image(input_img, use_column_width=True)
 
         with col2:
-            st.info("Your Result")
+            st.info("Resultado")
             image_file = Image.open(input_img)
-            label, confidence_score = classify_waste(image_file)
-            print(label)
-            # col4, col5 = st.columns([1,1])
-            if label == "4 cardboard\n":
-                st.success("The image is classified as CARDBOARD.")                
-                # with col4:
-                #     st.image("sdg goals/12.png", use_column_width=True)
-                #     st.image("sdg goals/13.png", use_column_width=True)
-                # with col5:
-                #     st.image("sdg goals/14.png", use_column_width=True)
-                #     st.image("sdg goals/15.png", use_column_width=True) 
-            elif label == "0 plastic\n":
-                st.success("The image is classified as PLASTIC.")
-                # with col4:
-                #     st.image("sdg goals/6.jpg", use_column_width=True)
-                #     st.image("sdg goals/12.png", use_column_width=True)
-                # with col5:
-                #     st.image("sdg goals/14.png", use_column_width=True)
-                #     st.image("sdg goals/15.png", use_column_width=True) 
-            elif label == "3 glass\n":
-                st.success("The image is classified as GLASS.")
-                # with col4:
-                #     st.image("sdg goals/12.png", use_column_width=True)
-                # with col5:
-                #     st.image("sdg goals/14.png", use_column_width=True)
-            elif label == "2 metal\n":
-                st.success("The image is classified as METAL.")
-                # with col4:
-                #     st.image("sdg goals/3.png", use_column_width=True)
-                #     st.image("sdg goals/6.jpg", use_column_width=True)
-                # with col5:
-                #     st.image("sdg goals/12.png", use_column_width=True)
-                #     st.image("sdg goals/14.png", use_column_width=True) 
-            else:
-                st.error("The image is not classified as any relevant class.")
 
+            with st.spinner('Analizando imagen...'):
+                label, confidence_score = classify_fruit(image_file)
+
+                # Extraer el nombre de la etiqueta sin el número
+                label_description = label.split(maxsplit=1)[1]  # Divide la etiqueta por el primer espacio y toma el segundo elemento
+                label2 = label_description  # Guarda la descripción en label2
+
+                st.success(label2)  # Muestra la etiqueta sin el número
+
+            
         with col3:
-            result = generate_carbon_footprint_info(label)
-            st.success(result)
+                st.info("Posibles recetas")
+                result = generate_recipe(label2)
+                st.success(result)
+
 
 
 

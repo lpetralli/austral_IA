@@ -1,0 +1,6 @@
+0 Frutilla Mala
+1 Frutilla Buena
+2 Durazno Malo
+3 Durazno Bueno
+4 Granada Buena
+5 Granada Mala
