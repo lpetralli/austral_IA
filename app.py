@@ -6,7 +6,6 @@ from openai import OpenAI
 
 
 
-
 def classify_fruit(img):
 
     # Disable scientific notation for clarity
