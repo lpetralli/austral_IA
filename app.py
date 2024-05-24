@@ -20,10 +20,12 @@ def classify_fruit(img):
     np.set_printoptions(suppress=True)
 
     # Load the model
-    model = load_model("modelo_frutas\keras_model.h5", compile=False)
+    model_path = os.path.join(script_dir, "modelo_frutas", "keras_model.h5")
+    model = load_model(model_path, compile=False)
 
     # Load the labels
-    class_names = open("modelo_frutas\labels.txt", "r").readlines()
+    labels_path = os.path.join(script_dir, "modelo_frutas", "labels.txt")
+    class_names = open(labels_path, "r").readlines()
 
     # Create the array of the right shape to feed into the keras model
     # The 'length' or number of images you can put into the array is
