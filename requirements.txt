@@ -1,5 +1,5 @@
 numpy==1.26.3
 streamlit==1.30.0
-keras==2.15.0
+tensorflow==2.15.0  # Ensure compatibility with keras version
 Pillow==10.2.0
 openai==1.11.1
