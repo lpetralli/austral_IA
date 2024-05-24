@@ -4,7 +4,10 @@ import numpy as np
 import streamlit as st 
 from openai import OpenAI
 
+import os
 
+# Change the current working directory to the location of the model files
+os.chdir('modelo_frutas')
 
 def classify_fruit(img):
 
