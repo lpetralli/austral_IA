@@ -5,12 +5,14 @@ import streamlit as st
 from openai import OpenAI
 
 import os
+import streamlit as st
+
 # Get the absolute path to the directory containing the script
 script_dir = os.path.dirname(os.path.abspath(__file__))
 
-# Paths to the model and labels
-model_path = os.path.join(script_dir, "modelo_frutas", "keras_model.h5")
-labels_path = os.path.join(script_dir, "modelo_frutas", "labels.txt")
+# List all files in the directory containing the script
+directory_files = os.listdir(script_dir)
+st.text("Files in directory: " + ", ".join(directory_files))
 
 def classify_fruit(img):
 
